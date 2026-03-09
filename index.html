@@ -3,272 +3,765 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Numérixa | Exercices de Mathématiques</title>
+    <title>Numérixa | Maîtrise les Mathématiques</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        /* Styles généraux */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+        * {
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
+            box-sizing: border-box;
         }
 
-        h1 {
-            font-size: 2rem;
-            color: #333;
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --gray-light: #e2e8f0;
+            --accent: #ec4899;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animation de fond */
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        body.light-mode {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: #0f172a;
+        }
+
+        body.light-mode #conteneur {
+            background-color: #ffffff;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-mode button, body.light-mode #champ-reponse {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        body.light-mode #message {
+            color: var(--primary);
         }
 
         /* Conteneur principal */
         #conteneur {
-            text-align: center;
-            width: 80%;
-            max-width: 800px;
-            padding: 20px;
-            border-radius: 8px;
-            background-color: #fff;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 40px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+            animation: slideInDown 0.6s ease-out;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* Section de la vidéo */
+        /* Élément décoratif */
+        #conteneur::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        #conteneur > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, 30px); }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--primary-light), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+        }
+
+        /* Section intro */
         #intro {
-            display: block;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        #intro-video {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
             margin-bottom: 20px;
         }
 
-        /* Section des boutons de choix */
+        .intro-text {
+            font-size: 1.2rem;
+            color: #cbd5e1;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        /* Section choix niveau */
         #choix-niveau {
             display: none;
-            margin-top: 20px;
+            animation: fadeIn 0.6s ease-out;
         }
 
-        /* Section des exercices */
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        /* Section exercices */
         #exercices {
             display: none;
-            margin-top: 20px;
+            animation: fadeIn 0.6s ease-out;
         }
 
-        /* Styles des boutons */
+        /* Barre de progression */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* Statistiques */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: rgba(99, 102, 241, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 3px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            background: rgba(99, 102, 241, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-light);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Numéro d'exercice */
+        #numero-exercice {
+            font-size: 1rem;
+            color: #94a3b8;
+            margin-bottom: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 1px;
+        }
+
+        /* Calcul actuel */
+        #calcul-actuel {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 40px 0;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 2px;
+            text-align: center;
+            color: var(--primary-light);
+            text-shadow: 0 0 20px rgba(129, 140, 248, 0.3);
+        }
+
+        /* Zone d'entrée */
+        .input-section {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        #champ-reponse {
+            padding: 15px 20px;
+            font-size: 1.3rem;
+            font-family: 'JetBrains Mono', monospace;
+            width: 200px;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            background-color: rgba(99, 102, 241, 0.1);
+            color: #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        #champ-reponse:focus {
+            outline: none;
+            border-color: var(--accent);
+            background-color: rgba(236, 72, 153, 0.1);
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.3);
+        }
+
+        body.light-mode #champ-reponse {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            border-color: var(--primary);
+        }
+
+        body.light-mode #champ-reponse:focus {
+            background-color: #e0e7ff;
+        }
+
+        /* Boutons */
         button {
             padding: 12px 24px;
-            margin: 10px;
             font-size: 1rem;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--primary);
+            color: white;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
         }
 
         button:hover {
-            background-color: #0056b3;
+            background-color: var(--primary-dark);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
         }
 
-        /* Style pour la liste des exercices */
-        #calcul-actuel {
-            font-size: 1.5rem;
-            margin: 20px 0;
+        button:active {
+            transform: translateY(0);
         }
 
-        /* Champ de réponse */
-        #champ-reponse {
-            padding: 8px;
-            font-size: 1.2rem;
-            width: 200px;
-            margin: 10px;
-            border-radius: 5px;
-        }
-
-        /* Bouton pour soumettre la réponse */
         #soumettre-reponse {
-            background-color: #28a745;
+            background-color: var(--success);
+            border-color: var(--success);
         }
 
-        /* Bouton retour */
+        #soumettre-reponse:hover {
+            background-color: #059669;
+            border-color: #10b981;
+        }
+
         .retour-btn {
+            background-color: var(--gray);
+            border-color: var(--gray);
             margin-top: 20px;
-            background-color: #28a745;
         }
 
         .retour-btn:hover {
-            background-color: #218838;
+            background-color: #475569;
+            border-color: #64748b;
         }
 
-        /* Style du message de résultat */
+        .theme-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .theme-btn:hover {
+            transform: scale(1.1) rotate(20deg);
+        }
+
+        /* Message de résultat */
         #message {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             margin-top: 20px;
-            font-weight: bold;
+            font-weight: 700;
+            text-align: center;
+            min-height: 30px;
+            animation: slideIn 0.4s ease-out;
         }
 
-        /* Style pour le numéro du calcul */
-        #numero-exercice {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-            color: #007bff;
+        #message.succes {
+            color: var(--success);
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+        }
+
+        #message.erreur {
+            color: var(--danger);
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         /* Footer */
         footer {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #333;
-            color: #fff;
-            font-size: 1rem;
             text-align: center;
-            width: 100%;
-            position: fixed;
-            bottom: 0;
-            left: 0;
+            padding: 20px;
+            color: #64748b;
+            margin-top: 40px;
+            border-top: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            #conteneur {
+                margin: 20px;
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            #calcul-actuel {
+                font-size: 2rem;
+            }
+
+            .buttons-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            #champ-reponse {
+                width: 100%;
+                max-width: 250px;
+            }
+
+            .theme-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Animations des boutons grille */
+        .buttons-grid button {
+            animation: scaleIn 0.5s ease-out;
+            animation-fill-mode: backwards;
+        }
+
+        .buttons-grid button:nth-child(1) { animation-delay: 0.1s; }
+        .buttons-grid button:nth-child(2) { animation-delay: 0.2s; }
+        .buttons-grid button:nth-child(3) { animation-delay: 0.3s; }
+        .buttons-grid button:nth-child(4) { animation-delay: 0.4s; }
+        .buttons-grid button:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Emoji animations */
+        .emoji-bounce {
+            display: inline-block;
+            animation: bounce 0.6s ease-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Styles des badges de difficulté */
+        .difficulty-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 10px;
+            background: rgba(129, 140, 248, 0.2);
+            color: var(--primary-light);
+            border: 1px solid var(--primary);
         }
     </style>
 </head>
 <body>
+    <button class="theme-btn" onclick="toggleTheme()" title="Changer le thème">🌙</button>
+
     <div id="conteneur">
         <!-- Section de l'introduction -->
         <div id="intro">
-            <video id="intro-video" width="640" height="360" controls autoplay>
+            <h1>Bienvenue dans Numérixa 🚀</h1>
+            <p class="intro-text">Maîtrise les mathématiques à ton rythme ! Prépare-toi pour une aventure numérique extraordinaire.</p>
+            <video id="intro-video" width="600" height="360" controls autoplay style="display: none;">
                 <source src="intro.mp4" type="video/mp4">
                 Votre navigateur ne supporte pas la lecture de vidéos.
             </video>
+            <button onclick="demarrerExercices()" style="margin-top: 20px; font-size: 1.1rem; padding: 15px 30px;">Commencer ⚡</button>
         </div>
 
         <!-- Section des choix de niveau -->
         <div id="choix-niveau">
-            <h1>Choisissez votre type d'exercice</h1>
-            <button onclick="lancerExercice('addition')">Addition</button>
-            <button onclick="lancerExercice('soustraction')">Soustraction</button>
-            <button onclick="lancerExercice('multiplication')">Multiplication</button>
-            <button onclick="lancerExercice('mixte')">Mixte</button>
-            <!-- Nouveau bouton pour rediriger vers le dossier math -->
-            <button onclick="window.location.href='math/'">Aller a l'épreuve de la forêt 🌲</button>
+            <h1>Choisissez votre défi 🎯</h1>
+            <div class="buttons-grid">
+                <button onclick="lancerExercice('addition')">
+                    Addition<br><span class="difficulty-badge">Facile</span>
+                </button>
+                <button onclick="lancerExercice('soustraction')">
+                    Soustraction<br><span class="difficulty-badge">Moyen</span>
+                </button>
+                <button onclick="lancerExercice('multiplication')">
+                    Multiplication<br><span class="difficulty-badge">Moyen</span>
+                </button>
+                <button onclick="lancerExercice('mixte')">
+                    Mixte<br><span class="difficulty-badge">Difficile</span>
+                </button>
+                <button onclick="window.location.href='math/'">
+                    🌲 Forêt
+                </button>
+            </div>
         </div>
 
         <!-- Section des exercices -->
         <div id="exercices">
-            <h1>Exercices de <span id="type-exercice"></span></h1>
-            <div id="numero-exercice"></div> <!-- Numéro de l'exercice -->
+            <h1 id="titre-exercice">Exercices</h1>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+
+            <div class="stats-container">
+                <div class="stat-box">
+                    <div class="stat-label">Exercice</div>
+                    <div class="stat-value"><span id="stat-current">1</span>/30</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">✓ Bonnes</div>
+                    <div class="stat-value" id="stat-correct">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">✗ Erreurs</div>
+                    <div class="stat-value" id="stat-wrong">0</div>
+                </div>
+            </div>
+
+            <div id="numero-exercice"></div>
             <div id="calcul-actuel"></div>
-            <input type="number" id="champ-reponse" placeholder="Votre réponse" />
-            <button id="soumettre-reponse" onclick="soumettreReponse()">Soumettre</button>
+
+            <div class="input-section">
+                <input type="number" id="champ-reponse" placeholder="Votre réponse" autofocus />
+                <button id="soumettre-reponse" onclick="soumettreReponse()">Soumettre</button>
+            </div>
+
             <div id="message"></div>
-            <button class="retour-btn" onclick="retour()">Retour</button>
+            <button class="retour-btn" onclick="retour()">← Retour</button>
         </div>
     </div>
 
-    <!-- Footer -->
     <footer>
-        © 2025 Numérixa. Tous droits réservés.
+        © 2025 Numérixa. Tous droits réservés. | Construis tes compétences mathématiques 💪
     </footer>
 
     <script>
         let exercices = [];
         let indexActuel = 0;
+        let bonnesReponses = 0;
+        let mauvaisesReponses = 0;
+        let operationActuelle = '';
 
-        // Fonction exécutée au chargement de la page
-        window.onload = () => {
-            const videoIntro = document.getElementById('intro-video');
-            videoIntro.addEventListener('ended', () => {
-                document.getElementById('intro').style.display = 'none'; // Masquer la vidéo
-                document.getElementById('choix-niveau').style.display = 'block'; // Afficher le choix des exercices
-            });
-        };
+        // Gestionnaire de thème
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.querySelector('.theme-btn');
+            body.classList.toggle('light-mode');
+            btn.textContent = body.classList.contains('light-mode') ? '🌙' : '☀️';
+            localStorage.setItem('theme', body.classList.contains('light-mode') ? 'light' : 'dark');
+        }
 
-        // Générer des exercices mathématiques selon l'opération
+        // Charger le thème sauvegardé
+        window.addEventListener('load', () => {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'light') {
+                document.body.classList.add('light-mode');
+                document.querySelector('.theme-btn').textContent = '☀️';
+            }
+        });
+
+        // Démarrer les exercices
+        function demarrerExercices() {
+            document.getElementById('intro').style.display = 'none';
+            document.getElementById('choix-niveau').style.display = 'block';
+        }
+
+        // Générer des exercices mathématiques
         function genererExercices(operation) {
             let exercicesGeneres = [];
-            for (let i = 0; i < 30; i++) { // Générer 30 calculs
+            const difficultes = {
+                'addition': { min1: 1, max1: 20, min2: 1, max2: 20 },
+                'soustraction': { min1: 10, max1: 50, min2: 1, max2: 30 },
+                'multiplication': { min1: 1, max1: 12, min2: 1, max2: 12 },
+                'mixte': null
+            };
+
+            for (let i = 0; i < 30; i++) {
                 let a, b, reponse, symbole;
-                if (operation === 'addition') {
-                    a = Math.floor(Math.random() * 10) + 1;
-                    b = Math.floor(Math.random() * 10) + 1;
-                    reponse = a + b;
-                    symbole = '+';
-                } else if (operation === 'soustraction') {
-                    a = Math.floor(Math.random() * 20) + 10;
-                    b = Math.floor(Math.random() * 10) + 1;
-                    reponse = a - b;
-                    symbole = '-';
-                } else if (operation === 'multiplication') {
-                    a = Math.floor(Math.random() * 10) + 1;
-                    b = Math.floor(Math.random() * 10) + 1;
-                    reponse = a * b;
-                    symbole = '×';
-                } else if (operation === 'mixte') {
-                    const operations = ['+', '-', '×'];
-                    const randomOp = operations[Math.floor(Math.random() * operations.length)];
-                    if (randomOp === '+') {
-                        a = Math.floor(Math.random() * 10) + 1;
-                        b = Math.floor(Math.random() * 10) + 1;
+
+                if (operation === 'mixte') {
+                    const ops = ['addition', 'soustraction', 'multiplication'];
+                    operation = ops[Math.floor(Math.random() * ops.length)];
+                }
+
+                const diff = difficultes[operation];
+                a = Math.floor(Math.random() * (diff.max1 - diff.min1 + 1)) + diff.min1;
+                b = Math.floor(Math.random() * (diff.max2 - diff.min2 + 1)) + diff.min2;
+
+                switch(operation) {
+                    case 'addition':
                         reponse = a + b;
                         symbole = '+';
-                    } else if (randomOp === '-') {
-                        a = Math.floor(Math.random() * 20) + 10;
-                        b = Math.floor(Math.random() * 10) + 1;
+                        break;
+                    case 'soustraction':
                         reponse = a - b;
-                        symbole = '-';
-                    } else if (randomOp === '×') {
-                        a = Math.floor(Math.random() * 10) + 1;
-                        b = Math.floor(Math.random() * 10) + 1;
+                        symbole = '−';
+                        break;
+                    case 'multiplication':
                         reponse = a * b;
                         symbole = '×';
-                    }
+                        break;
                 }
+
                 exercicesGeneres.push({ question: `${a} ${symbole} ${b}`, reponse });
             }
             return exercicesGeneres;
         }
 
-        // Lancer un exercice selon l'opération
+        // Lancer un exercice
         function lancerExercice(operation) {
+            operationActuelle = operation;
             document.getElementById('choix-niveau').style.display = 'none';
             document.getElementById('exercices').style.display = 'block';
-            document.getElementById('type-exercice').innerText = operation;
 
+            const labels = {
+                'addition': 'Addition ➕',
+                'soustraction': 'Soustraction ➖',
+                'multiplication': 'Multiplication ✖️',
+                'mixte': 'Mode Mixte 🔀'
+            };
+
+            document.getElementById('titre-exercice').textContent = labels[operation];
             exercices = genererExercices(operation);
             indexActuel = 0;
+            bonnesReponses = 0;
+            mauvaisesReponses = 0;
+            mettreAJourStats();
             afficherCalcul();
+            document.getElementById('champ-reponse').focus();
         }
 
-        // Afficher le calcul actuel
+        // Afficher le calcul
         function afficherCalcul() {
+            if (indexActuel >= exercices.length) return;
+            
             const calculActuel = exercices[indexActuel];
-            document.getElementById('numero-exercice').innerText = `Exercice ${indexActuel + 1} / 30`;
-            document.getElementById('calcul-actuel').innerText = calculActuel.question;
+            document.getElementById('numero-exercice').textContent = `Calcul ${indexActuel + 1} / ${exercices.length}`;
+            document.getElementById('calcul-actuel').textContent = calculActuel.question;
             document.getElementById('champ-reponse').value = '';
-            document.getElementById('message').innerText = '';
+            document.getElementById('message').textContent = '';
+            document.getElementById('message').className = '';
+            document.getElementById('champ-reponse').focus();
+            mettreAJourBarre();
         }
 
-        // Soumettre la réponse
+        // Mettre à jour la barre de progression
+        function mettreAJourBarre() {
+            const pourcentage = ((indexActuel + 1) / exercices.length) * 100;
+            document.getElementById('progress-fill').style.width = pourcentage + '%';
+        }
+
+        // Mettre à jour les stats
+        function mettreAJourStats() {
+            document.getElementById('stat-current').textContent = indexActuel + 1;
+            document.getElementById('stat-correct').textContent = bonnesReponses;
+            document.getElementById('stat-wrong').textContent = mauvaisesReponses;
+        }
+
+        // Soumettre une réponse
         function soumettreReponse() {
-            const reponseUtilisateur = parseInt(document.getElementById('champ-reponse').value);
+            const input = document.getElementById('champ-reponse');
+            const reponseUtilisateur = parseInt(input.value);
             const reponseCorrecte = exercices[indexActuel].reponse;
+            const messageDiv = document.getElementById('message');
+
+            if (isNaN(reponseUtilisateur)) {
+                messageDiv.textContent = 'Veuillez entrer un nombre !';
+                messageDiv.className = 'erreur';
+                return;
+            }
 
             if (reponseUtilisateur === reponseCorrecte) {
-                document.getElementById('message').innerText = 'Bonne réponse !';
+                bonnesReponses++;
+                messageDiv.textContent = '✓ Bonne réponse !';
+                messageDiv.className = 'succes';
+                mettreAJourStats();
                 indexActuel++;
 
                 if (indexActuel < exercices.length) {
-                    setTimeout(afficherCalcul, 1000); // Attendre 1 seconde avant d'afficher le calcul suivant
+                    setTimeout(afficherCalcul, 800);
                 } else {
-                    document.getElementById('message').innerText += ' Vous avez terminé tous les exercices !';
+                    setTimeout(afficherFinale, 800);
                 }
             } else {
-                document.getElementById('message').innerText = 'Mauvaise réponse. Essayez encore !';
+                mauvaisesReponses++;
+                messageDiv.textContent = `✗ Mauvaise réponse. La réponse est ${reponseCorrecte}`;
+                messageDiv.className = 'erreur';
+                mettreAJourStats();
+                indexActuel++;
+
+                if (indexActuel < exercices.length) {
+                    setTimeout(afficherCalcul, 1200);
+                } else {
+                    setTimeout(afficherFinale, 1200);
+                }
             }
         }
 
-        // Retourner au menu des niveaux
+        // Afficher la page finale
+        function afficherFinale() {
+            const pourcentage = Math.round((bonnesReponses / exercices.length) * 100);
+            const messageDiv = document.getElementById('message');
+            const messageTexte = `
+                <div style="margin: 40px 0;">
+                    <div style="font-size: 2rem; margin-bottom: 20px;">
+                        ${pourcentage >= 90 ? '🏆' : pourcentage >= 70 ? '⭐' : '🌟'}
+                    </div>
+                    <div>Score: ${pourcentage}%</div>
+                    <div style="margin-top: 15px; color: #94a3b8; font-size: 0.95rem;">
+                        ${bonnesReponses}/30 réponses correctes
+                    </div>
+                </div>
+            `;
+            messageDiv.innerHTML = messageTexte;
+            messageDiv.className = pourcentage >= 70 ? 'succes' : 'erreur';
+            document.getElementById('numero-exercice').style.display = 'none';
+            document.getElementById('calcul-actuel').style.display = 'none';
+            document.querySelector('.input-section').style.display = 'none';
+        }
+
+        // Retour au menu
         function retour() {
             document.getElementById('exercices').style.display = 'none';
             document.getElementById('choix-niveau').style.display = 'block';
+            document.getElementById('numero-exercice').style.display = 'block';
+            document.getElementById('calcul-actuel').style.display = 'block';
+            document.querySelector('.input-section').style.display = 'flex';
         }
+
+        // Gestion du clavier
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && document.getElementById('exercices').style.display !== 'none') {
+                soumettreReponse();
+            }
+        });
     </script>
 </body>
 </html>
-
